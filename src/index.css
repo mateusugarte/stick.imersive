@@ -79,99 +79,10 @@
   }
 }
 
-/* Aurora background animation */
+/* Subtle ambient pulse */
 @keyframes pulse-glow {
-  0%, 100% { opacity: 0.06; transform: scale(1); }
-  50% { opacity: 0.14; transform: scale(1.15); }
-}
-
-/* Floating orbs - animated background across the whole page */
-@keyframes float-1 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25% { transform: translate(100px, -150px) scale(1.1); }
-  50% { transform: translate(-50px, -300px) scale(0.95); }
-  75% { transform: translate(150px, -100px) scale(1.05); }
-}
-
-@keyframes float-2 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25% { transform: translate(-120px, 100px) scale(1.15); }
-  50% { transform: translate(80px, -200px) scale(0.9); }
-  75% { transform: translate(-100px, -50px) scale(1.1); }
-}
-
-@keyframes float-3 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(200px, -100px) scale(1.2); }
-  66% { transform: translate(-150px, 50px) scale(0.85); }
-}
-
-@keyframes float-4 {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.04; }
-  50% { transform: translate(-80px, -250px) scale(1.3); opacity: 0.1; }
-}
-
-@keyframes float-5 {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.05; }
-  40% { transform: translate(120px, 80px) scale(1.15); opacity: 0.12; }
-  80% { transform: translate(-60px, -120px) scale(0.9); opacity: 0.03; }
-}
-
-.floating-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(100px);
-  will-change: transform;
-}
-
-.floating-orb-1 {
-  width: 600px;
-  height: 600px;
-  top: 10%;
-  left: -10%;
-  background: hsl(340 75% 60%);
-  opacity: 0.07;
-  animation: float-1 25s ease-in-out infinite;
-}
-
-.floating-orb-2 {
-  width: 500px;
-  height: 500px;
-  top: 40%;
-  right: -15%;
-  background: hsl(320 60% 50%);
-  opacity: 0.05;
-  animation: float-2 30s ease-in-out infinite;
-}
-
-.floating-orb-3 {
-  width: 400px;
-  height: 400px;
-  top: 60%;
-  left: 30%;
-  background: hsl(350 70% 55%);
-  opacity: 0.06;
-  animation: float-3 20s ease-in-out infinite;
-}
-
-.floating-orb-4 {
-  width: 550px;
-  height: 550px;
-  top: 75%;
-  right: 10%;
-  background: hsl(340 75% 60%);
-  opacity: 0.04;
-  animation: float-4 35s ease-in-out infinite;
-}
-
-.floating-orb-5 {
-  width: 450px;
-  height: 450px;
-  bottom: 5%;
-  left: 10%;
-  background: hsl(330 65% 50%);
-  opacity: 0.05;
-  animation: float-5 28s ease-in-out infinite;
+  0%, 100% { opacity: 0.04; }
+  50% { opacity: 0.08; }
 }
 
 @layer utilities {
