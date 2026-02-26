@@ -48,40 +48,38 @@ export function EtheralShadow({
 }: EtheralShadowProps) {
   const id = useInstanceId();
   const animationEnabled = animation && animation.scale > 0;
-  const feColorMatrixRef = useRef<SVGFEColorMatrixElement>(null);
-  const hueRotateMotionValue = useMotionValue(180);
-  const hueRotateAnimation = useRef<AnimationPlaybackControls | null>(null);
+  const seedRef = useRef<SVGFETurbulenceElement>(null);
+  const seedMotion = useMotionValue(0);
+  const seedAnimation = useRef<AnimationPlaybackControls | null>(null);
 
   const displacementScale = animation ? mapRange(animation.scale, 1, 100, 20, 100) : 0;
-  const animationDuration = animation ? mapRange(animation.speed, 1, 100, 1000, 50) : 1;
+  const animationDuration = animation ? mapRange(animation.speed, 1, 100, 60, 5) : 30;
 
   useEffect(() => {
-    if (feColorMatrixRef.current && animationEnabled) {
-      if (hueRotateAnimation.current) {
-        hueRotateAnimation.current.stop();
+    if (seedRef.current && animationEnabled) {
+      if (seedAnimation.current) {
+        seedAnimation.current.stop();
       }
-      hueRotateMotionValue.set(0);
-      hueRotateAnimation.current = animate(hueRotateMotionValue, 360, {
-        duration: animationDuration / 25,
+      seedMotion.set(0);
+      seedAnimation.current = animate(seedMotion, 1000, {
+        duration: animationDuration,
         repeat: Infinity,
         repeatType: "loop",
-        repeatDelay: 0,
         ease: "linear",
-        delay: 0,
         onUpdate: (value: number) => {
-          if (feColorMatrixRef.current) {
-            feColorMatrixRef.current.setAttribute("values", String(value));
+          if (seedRef.current) {
+            seedRef.current.setAttribute("seed", String(Math.floor(value)));
           }
         }
       });
 
       return () => {
-        if (hueRotateAnimation.current) {
-          hueRotateAnimation.current.stop();
+        if (seedAnimation.current) {
+          seedAnimation.current.stop();
         }
       };
     }
-  }, [animationEnabled, animationDuration, hueRotateMotionValue]);
+  }, [animationEnabled, animationDuration, seedMotion]);
 
   return (
     <div
@@ -108,8 +106,9 @@ export function EtheralShadow({
             <defs>
               <filter id={`${id}-turbulence`} x="0%" y="0%" width="100%" height="100%">
                 <feTurbulence
+                  ref={seedRef}
                   type="fractalNoise"
-                  baseFrequency="0.01 0.01"
+                  baseFrequency="0.008 0.008"
                   numOctaves={3}
                   seed={2}
                   result="turbulence"
@@ -119,13 +118,6 @@ export function EtheralShadow({
                   in2="turbulence"
                   scale={displacementScale}
                   result="displacement"
-                />
-                <feColorMatrix
-                  ref={feColorMatrixRef}
-                  type="hueRotate"
-                  values="180"
-                  in="displacement"
-                  result="hueRotated"
                 />
               </filter>
             </defs>
@@ -147,14 +139,23 @@ export function EtheralShadow({
               display: 'block',
             }}
           >
-            <text style={{ display: 'none' }}>Etheral Shadows</text>
             <defs>
-              <radialGradient id={`${id}-grad`} cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor={color} stopOpacity="0.6" />
+              <radialGradient id={`${id}-grad1`} cx="30%" cy="30%" r="60%">
+                <stop offset="0%" stopColor={color} stopOpacity="0.5" />
                 <stop offset="100%" stopColor={color} stopOpacity="0" />
               </radialGradient>
+              <radialGradient id={`${id}-grad2`} cx="70%" cy="70%" r="50%">
+                <stop offset="0%" stopColor="hsl(340, 60%, 35%)" stopOpacity="0.4" />
+                <stop offset="100%" stopColor="hsl(340, 60%, 35%)" stopOpacity="0" />
+              </radialGradient>
+              <radialGradient id={`${id}-grad3`} cx="80%" cy="20%" r="40%">
+                <stop offset="0%" stopColor="hsl(350, 50%, 25%)" stopOpacity="0.3" />
+                <stop offset="100%" stopColor="hsl(350, 50%, 25%)" stopOpacity="0" />
+              </radialGradient>
             </defs>
-            <rect width="900" height="600" fill={`url(#${id}-grad)`} />
+            <rect width="900" height="600" fill={`url(#${id}-grad1)`} />
+            <rect width="900" height="600" fill={`url(#${id}-grad2)`} />
+            <rect width="900" height="600" fill={`url(#${id}-grad3)`} />
           </svg>
         </div>
       </div>
