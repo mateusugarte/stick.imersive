@@ -140,17 +140,17 @@ export function EtheralShadow({
             }}
           >
             <defs>
-              <radialGradient id={`${id}-grad1`} cx="30%" cy="30%" r="60%">
-                <stop offset="0%" stopColor={color} stopOpacity="0.5" />
-                <stop offset="100%" stopColor={color} stopOpacity="0" />
+              <radialGradient id={`${id}-grad1`} cx="25%" cy="25%" r="55%">
+                <stop offset="0%" stopColor="hsl(340, 50%, 18%)" stopOpacity="0.6" />
+                <stop offset="100%" stopColor="hsl(340, 50%, 18%)" stopOpacity="0" />
               </radialGradient>
-              <radialGradient id={`${id}-grad2`} cx="70%" cy="70%" r="50%">
-                <stop offset="0%" stopColor="hsl(340, 60%, 35%)" stopOpacity="0.4" />
-                <stop offset="100%" stopColor="hsl(340, 60%, 35%)" stopOpacity="0" />
+              <radialGradient id={`${id}-grad2`} cx="75%" cy="65%" r="50%">
+                <stop offset="0%" stopColor="hsl(335, 45%, 14%)" stopOpacity="0.5" />
+                <stop offset="100%" stopColor="hsl(335, 45%, 14%)" stopOpacity="0" />
               </radialGradient>
-              <radialGradient id={`${id}-grad3`} cx="80%" cy="20%" r="40%">
-                <stop offset="0%" stopColor="hsl(350, 50%, 25%)" stopOpacity="0.3" />
-                <stop offset="100%" stopColor="hsl(350, 50%, 25%)" stopOpacity="0" />
+              <radialGradient id={`${id}-grad3`} cx="60%" cy="15%" r="40%">
+                <stop offset="0%" stopColor="hsl(345, 40%, 12%)" stopOpacity="0.4" />
+                <stop offset="100%" stopColor="hsl(345, 40%, 12%)" stopOpacity="0" />
               </radialGradient>
             </defs>
             <rect width="900" height="600" fill={`url(#${id}-grad1)`} />

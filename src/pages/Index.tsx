@@ -1,10 +1,53 @@
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent, useEffect, useMemo } from "react";
 import ScrollReveal from "../components/ScrollReveal";
 import { EtheralShadow } from "../components/ui/etheral-shadow";
 import { ContainerScroll } from "../components/ui/container-scroll-animation";
 import { ShinyButton } from "../components/ui/shiny-button";
 import { motion } from "framer-motion";
 import { Check, Clock, MessageCircle, TrendingDown, Search, Zap, CalendarX, ShieldAlert, HeartPulse, ArrowRight } from "lucide-react";
+
+// Floating sparkles
+const FloatingSparkles = () => {
+  const sparkles = useMemo(() => 
+    Array.from({ length: 18 }, (_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      size: Math.random() * 3 + 1.5,
+      delay: Math.random() * 8,
+      duration: Math.random() * 6 + 5,
+      opacity: Math.random() * 0.4 + 0.1,
+    }))
+  , []);
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-[1] overflow-hidden">
+      {sparkles.map((s) => (
+        <motion.div
+          key={s.id}
+          className="absolute rounded-full bg-primary/60"
+          style={{
+            left: s.left,
+            top: s.top,
+            width: s.size,
+            height: s.size,
+          }}
+          animate={{
+            opacity: [0, s.opacity, 0],
+            scale: [0.5, 1.2, 0.5],
+            y: [0, -30, 0],
+          }}
+          transition={{
+            duration: s.duration,
+            delay: s.delay,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+    </div>
+  );
+};
 
 const scrollToForm = () => {
   document.getElementById("formulario")?.scrollIntoView({ behavior: "smooth" });
@@ -390,10 +433,11 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background relative">
       <EtheralShadow
-        color="rgba(180, 40, 80, 1)"
-        animation={{ scale: 60, speed: 25 }}
-        noise={{ opacity: 0.03, scale: 1 }}
+        color="hsl(340, 40%, 12%)"
+        animation={{ scale: 50, speed: 20 }}
+        noise={{ opacity: 0.02, scale: 1 }}
       />
+      <FloatingSparkles />
       <HeroSection />
       <ProblemScrollSection />
       <DiagnosticSection />
