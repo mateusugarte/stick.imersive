@@ -32,6 +32,7 @@ const useCountdown = (targetDate: Date) => {
 
 const CountdownTimer = () => {
   const target = new Date("2025-03-05T20:00:00-03:00");
+  const now = new Date();
   const { days, hours, minutes, seconds } = useCountdown(target);
 
   const blocks = [
@@ -58,8 +59,10 @@ const CountdownTimer = () => {
 };
 
 const HeroSection = () => (
-  <section className="animated-bg section-padding flex flex-col items-center text-center max-w-5xl mx-auto min-h-[95vh] justify-center relative">
-    <div className="grid-overlay" />
+<section className="section-padding flex flex-col items-center text-center max-w-5xl mx-auto min-h-[95vh] justify-center relative overflow-hidden">
+    <div className="light-orb light-orb-hero-top" />
+    <div className="light-orb light-orb-hero-right" />
+    <div className="light-orb light-orb-hero-bottom" />
     <img
       src="/logo.png"
       alt="Logo"
@@ -94,7 +97,8 @@ const HeroSection = () => (
 );
 
 const ProblemSection = () => (
-  <section className="section-padding border-t border-border">
+  <section className="section-padding border-t border-border relative overflow-hidden">
+    <div className="light-orb light-orb-mid" />
     <div className="max-w-3xl mx-auto">
       <ScrollReveal>
         <div className="inline-flex items-center gap-2 bg-accent/50 border border-border rounded-full px-4 py-1.5 mb-6">
@@ -128,10 +132,10 @@ const ProblemSection = () => (
 
       <ScrollReveal delay={200}>
         <div className="relative rounded-xl bg-card border border-primary/20 p-8 md:p-12 text-center overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none" />
           <p className="font-display text-xl md:text-3xl font-bold text-foreground leading-snug relative z-10">
-            Algumas clínicas recuperam até{" "}
-            <span className="text-highlight">R$33.000</span>{" "}
+            Clínicas já recuperaram{" "}
+            <span className="text-highlight">+R$33.000</span>{" "}
             corrigindo falhas estruturais simples.
           </p>
         </div>
@@ -193,7 +197,8 @@ const FormSection = () => {
   };
 
   return (
-    <section id="formulario" className="section-padding border-t border-border">
+    <section id="formulario" className="section-padding border-t border-border relative overflow-hidden">
+      <div className="light-orb light-orb-form" />
       <div className="max-w-md mx-auto">
         <ScrollReveal>
           {!submitted ? (

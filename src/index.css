@@ -4,48 +4,48 @@
 
 @layer base {
   :root {
-    --background: 220 20% 7%;
-    --foreground: 220 10% 92%;
+    --background: 340 30% 8%;
+    --foreground: 340 10% 92%;
 
-    --card: 220 18% 10%;
-    --card-foreground: 220 10% 92%;
+    --card: 340 25% 11%;
+    --card-foreground: 340 10% 92%;
 
-    --popover: 220 20% 7%;
-    --popover-foreground: 220 10% 92%;
+    --popover: 340 30% 8%;
+    --popover-foreground: 340 10% 92%;
 
-    --primary: 340 70% 55%;
+    --primary: 340 75% 60%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 15% 14%;
-    --secondary-foreground: 220 10% 85%;
+    --secondary: 340 20% 14%;
+    --secondary-foreground: 340 10% 85%;
 
-    --muted: 220 12% 16%;
-    --muted-foreground: 220 8% 55%;
+    --muted: 340 15% 16%;
+    --muted-foreground: 340 8% 55%;
 
-    --accent: 340 40% 15%;
+    --accent: 340 35% 15%;
     --accent-foreground: 340 60% 75%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 220 12% 16%;
-    --input: 220 12% 16%;
-    --ring: 340 70% 55%;
+    --border: 340 15% 16%;
+    --input: 340 15% 16%;
+    --ring: 340 75% 60%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 220 20% 7%;
-    --sidebar-foreground: 220 10% 92%;
-    --sidebar-primary: 340 70% 55%;
+    --sidebar-background: 340 30% 8%;
+    --sidebar-foreground: 340 10% 92%;
+    --sidebar-primary: 340 75% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 15% 14%;
-    --sidebar-accent-foreground: 220 10% 85%;
-    --sidebar-border: 220 12% 16%;
-    --sidebar-ring: 340 70% 55%;
+    --sidebar-accent: 340 20% 14%;
+    --sidebar-accent-foreground: 340 10% 85%;
+    --sidebar-border: 340 15% 16%;
+    --sidebar-ring: 340 75% 60%;
 
-    --highlight: 340 70% 55%;
-    --highlight-soft: 340 40% 15%;
-    --surface-alt: 220 15% 12%;
+    --highlight: 340 75% 60%;
+    --highlight-soft: 340 35% 15%;
+    --surface-alt: 340 20% 12%;
   }
 }
 
@@ -68,55 +68,67 @@
   }
 }
 
-/* Animated gradient background */
-@keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0) scale(1); opacity: 0.08; }
-  50% { transform: translateY(-30px) scale(1.05); opacity: 0.15; }
-}
-
+/* Light orbs */
 @keyframes pulse-glow {
+  0%, 100% { opacity: 0.06; transform: scale(1); }
+  50% { opacity: 0.14; transform: scale(1.15); }
+}
+
+@keyframes pulse-glow-slow {
   0%, 100% { opacity: 0.04; transform: scale(1); }
-  50% { opacity: 0.1; transform: scale(1.1); }
+  50% { opacity: 0.1; transform: scale(1.08); }
 }
 
-.animated-bg {
-  position: relative;
-  overflow: hidden;
-}
-
-.animated-bg::before {
-  content: '';
+.light-orb {
   position: absolute;
-  inset: 0;
-  background: 
-    radial-gradient(ellipse 600px 600px at 20% 20%, hsl(340 70% 55% / 0.08), transparent),
-    radial-gradient(ellipse 500px 500px at 80% 80%, hsl(260 60% 50% / 0.06), transparent),
-    radial-gradient(ellipse 400px 400px at 50% 50%, hsl(340 70% 55% / 0.04), transparent);
-  animation: pulse-glow 8s ease-in-out infinite;
+  border-radius: 50%;
   pointer-events: none;
-  z-index: 0;
+  filter: blur(80px);
 }
 
-.animated-bg > * {
-  position: relative;
-  z-index: 1;
+.light-orb-hero-top {
+  width: 500px;
+  height: 500px;
+  top: -100px;
+  left: -100px;
+  background: hsl(340 75% 60%);
+  animation: pulse-glow 6s ease-in-out infinite;
 }
 
-.grid-overlay {
-  position: absolute;
-  inset: 0;
-  background-image: 
-    linear-gradient(hsl(220 12% 16% / 0.4) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(220 12% 16% / 0.4) 1px, transparent 1px);
-  background-size: 60px 60px;
-  pointer-events: none;
-  z-index: 0;
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 20%, transparent 70%);
+.light-orb-hero-right {
+  width: 400px;
+  height: 400px;
+  top: 20%;
+  right: -120px;
+  background: hsl(320 60% 50%);
+  animation: pulse-glow-slow 8s ease-in-out infinite 2s;
+}
+
+.light-orb-hero-bottom {
+  width: 350px;
+  height: 350px;
+  bottom: -80px;
+  left: 40%;
+  background: hsl(350 70% 55%);
+  animation: pulse-glow 10s ease-in-out infinite 1s;
+}
+
+.light-orb-mid {
+  width: 450px;
+  height: 450px;
+  top: 50%;
+  right: -150px;
+  background: hsl(340 75% 60%);
+  animation: pulse-glow-slow 9s ease-in-out infinite;
+}
+
+.light-orb-form {
+  width: 500px;
+  height: 500px;
+  bottom: -150px;
+  left: -150px;
+  background: hsl(330 65% 50%);
+  animation: pulse-glow 7s ease-in-out infinite 3s;
 }
 
 @layer utilities {
