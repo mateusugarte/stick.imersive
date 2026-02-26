@@ -78,7 +78,7 @@ const useCountdown = (targetDate: Date) => {
 };
 
 const CountdownTimer = () => {
-  const target = new Date("2025-03-05T20:00:00-03:00");
+  const target = new Date("2026-03-05T20:00:00-03:00");
   const { days, hours, minutes, seconds } = useCountdown(target);
 
   const blocks = [
