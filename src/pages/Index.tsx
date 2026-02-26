@@ -1,6 +1,6 @@
 import { useState, FormEvent, useEffect, useRef } from "react";
 import ScrollReveal from "../components/ScrollReveal";
-import { AuroraBackground } from "../components/ui/aurora-background";
+import { EtheralShadow } from "../components/ui/etheral-shadow";
 import { ContainerScroll } from "../components/ui/container-scroll-animation";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Check, Clock, MessageCircle, TrendingDown, Search, Zap, CalendarX, ShieldAlert, HeartPulse, ArrowRight } from "lucide-react";
@@ -72,8 +72,8 @@ const CountdownTimer = () => {
 };
 
 const HeroSection = () => (
-  <AuroraBackground className="min-h-[95vh]">
-    <div className="relative z-10 flex flex-col items-center text-center max-w-5xl mx-auto px-6">
+  <section className="min-h-[95vh] flex flex-col items-center justify-center relative z-10 px-6">
+    <div className="flex flex-col items-center text-center max-w-5xl mx-auto">
       <img
         src="/logo.png"
         alt="Logo"
@@ -108,7 +108,7 @@ const HeroSection = () => (
         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
       </button>
     </div>
-  </AuroraBackground>
+  </section>
 );
 
 const ProblemScrollSection = () => {
@@ -306,7 +306,11 @@ const FormSection = () => {
 const Index = () => {
   return (
     <div className="min-h-screen bg-background relative">
-      <FloatingOrbs />
+      <EtheralShadow
+        color="rgba(180, 40, 80, 1)"
+        animation={{ scale: 60, speed: 25 }}
+        noise={{ opacity: 0.03, scale: 1 }}
+      />
       <HeroSection />
       <ProblemScrollSection />
       <DiagnosticSection />
