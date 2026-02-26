@@ -1,5 +1,6 @@
 import { useState, FormEvent, useEffect } from "react";
 import ScrollReveal from "../components/ScrollReveal";
+import { AuroraBackground } from "../components/ui/aurora-background";
 import { Check, Clock, MessageCircle, TrendingDown, Search, Zap, CalendarX, ShieldAlert, HeartPulse, ArrowRight } from "lucide-react";
 
 const scrollToForm = () => {
@@ -59,41 +60,40 @@ const CountdownTimer = () => {
 };
 
 const HeroSection = () => (
-<section className="section-padding flex flex-col items-center text-center max-w-5xl mx-auto min-h-[95vh] justify-center relative overflow-hidden">
-    <div className="light-orb light-orb-hero-top" />
-    <div className="light-orb light-orb-hero-right" />
-    <div className="light-orb light-orb-hero-bottom" />
-    <img
-      src="/logo.png"
-      alt="Logo"
-      className="w-20 md:w-24 mb-8 animate-fade-in relative z-10"
-    />
-    <div className="inline-flex items-center gap-2 bg-accent/50 border border-border rounded-full px-4 py-1.5 mb-8 animate-fade-in">
-      <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-      <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
-        Ao vivo · 05 de Março
-      </span>
+  <AuroraBackground className="min-h-[95vh]">
+    <div className="relative z-10 flex flex-col items-center text-center max-w-5xl mx-auto px-6">
+      <img
+        src="/logo.png"
+        alt="Logo"
+        className="w-20 md:w-24 mb-8 animate-fade-in"
+      />
+      <div className="inline-flex items-center gap-2 bg-accent/50 border border-border rounded-full px-4 py-1.5 mb-8 animate-fade-in">
+        <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+        <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+          Ao vivo · 05 de Março
+        </span>
+      </div>
+      <h1 className="font-display text-4xl md:text-6xl lg:text-7xl leading-[1.05] font-bold mb-6 animate-fade-up text-foreground">
+        Sua clínica pode estar <br className="hidden md:block" />
+        perdendo <span className="text-highlight">+R$33k</span>
+      </h1>
+      <p className="text-muted-foreground text-base md:text-lg max-w-lg mb-10 animate-fade-up font-light leading-relaxed" style={{ animationDelay: "0.15s" }}>
+        Erros silenciosos drenam seu faturamento todos os dias.
+        Descubra quais são e como corrigi-los no diagnóstico ao vivo.
+      </p>
+      <div className="mb-10 animate-fade-up" style={{ animationDelay: "0.25s" }}>
+        <CountdownTimer />
+      </div>
+      <button
+        onClick={scrollToForm}
+        className="group bg-primary text-primary-foreground font-medium text-sm uppercase tracking-wider px-10 py-4 rounded-lg hover:bg-primary/90 transition-all duration-300 animate-fade-up flex items-center gap-2"
+        style={{ animationDelay: "0.35s" }}
+      >
+        Garantir Minha Vaga
+        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+      </button>
     </div>
-    <h1 className="font-display text-4xl md:text-6xl lg:text-7xl leading-[1.05] font-bold mb-6 animate-fade-up text-foreground">
-      Sua clínica pode estar <br className="hidden md:block" />
-      perdendo <span className="text-highlight">+R$33k</span>
-    </h1>
-    <p className="text-muted-foreground text-base md:text-lg max-w-lg mb-10 animate-fade-up font-light leading-relaxed" style={{ animationDelay: "0.15s" }}>
-      Erros silenciosos drenam seu faturamento todos os dias.
-      Descubra quais são e como corrigi-los no diagnóstico ao vivo.
-    </p>
-    <div className="mb-10 animate-fade-up" style={{ animationDelay: "0.25s" }}>
-      <CountdownTimer />
-    </div>
-    <button
-      onClick={scrollToForm}
-      className="group bg-primary text-primary-foreground font-medium text-sm uppercase tracking-wider px-10 py-4 rounded-lg hover:bg-primary/90 transition-all duration-300 animate-fade-up flex items-center gap-2"
-      style={{ animationDelay: "0.35s" }}
-    >
-      Garantir Minha Vaga
-      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-    </button>
-  </section>
+  </AuroraBackground>
 );
 
 const ProblemSection = () => (
