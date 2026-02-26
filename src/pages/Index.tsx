@@ -1,92 +1,36 @@
-import { useState, FormEvent, useEffect, useMemo, useCallback } from "react";
+import { useState, FormEvent, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { EtheralShadow } from "../components/ui/etheral-shadow";
-import { ShinyButton } from "../components/ui/shiny-button";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Check, Clock, MessageCircle, TrendingDown, Search, Zap, CalendarX, ShieldAlert, HeartPulse, ArrowRight } from "lucide-react";
-
-// Reduced sparkles for lighter feel
-const FloatingSparkles = () => {
-  const sparkles = useMemo(() => 
-    Array.from({ length: 10 }, (_, i) => ({
-      id: i,
-      left: `${Math.random() * 100}%`,
-      top: `${Math.random() * 100}%`,
-      size: Math.random() * 2.5 + 1,
-      delay: Math.random() * 6,
-      duration: Math.random() * 8 + 6,
-      opacity: Math.random() * 0.3 + 0.05,
-    }))
-  , []);
-
-  return (
-    <div className="fixed inset-0 pointer-events-none z-[1] overflow-hidden">
-      {sparkles.map((s) => (
-        <motion.div
-          key={s.id}
-          className="absolute rounded-full bg-primary/40"
-          style={{
-            left: s.left,
-            top: s.top,
-            width: s.size,
-            height: s.size,
-            willChange: "opacity, transform",
-          }}
-          animate={{
-            opacity: [0, s.opacity, 0],
-            scale: [0.8, 1.1, 0.8],
-            y: [0, -20, 0],
-          }}
-          transition={{
-            duration: s.duration,
-            delay: s.delay,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-      ))}
-    </div>
-  );
-};
 
 const scrollToForm = () => {
   document.getElementById("formulario")?.scrollIntoView({ behavior: "smooth" });
 };
 
-// Shared animation variants for consistency
-const ease: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 16 },
-  visible: (delay = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay, duration: 0.6, ease },
-  }),
+// Simple fade-up for all scroll reveals
+const reveal = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } },
 };
 
-const fadeIn = {
-  hidden: { opacity: 0 },
-  visible: (delay = 0) => ({
-    opacity: 1,
-    transition: { delay, duration: 0.5, ease: "easeOut" as const },
-  }),
+// Stagger children
+const stagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.07 } },
 };
 
-// Countdown hook
+// Countdown
 const useCountdown = (targetDate: Date) => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-
   useEffect(() => {
     const tick = () => {
-      const now = new Date().getTime();
-      const diff = targetDate.getTime() - now;
+      const diff = targetDate.getTime() - Date.now();
       if (diff <= 0) return;
       setTimeLeft({
-        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((diff / (1000 * 60)) % 60),
+        days: Math.floor(diff / 86400000),
+        hours: Math.floor((diff / 3600000) % 24),
+        minutes: Math.floor((diff / 60000) % 60),
         seconds: Math.floor((diff / 1000) % 60),
       });
     };
@@ -94,124 +38,90 @@ const useCountdown = (targetDate: Date) => {
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
   }, [targetDate]);
-
   return timeLeft;
 };
 
 const CountdownTimer = () => {
   const target = useMemo(() => new Date("2026-03-05T20:00:00-03:00"), []);
-  const { days, hours, minutes, seconds } = useCountdown(target);
-
+  const t = useCountdown(target);
   const blocks = [
-    { value: days, label: "Dias" },
-    { value: hours, label: "Horas" },
-    { value: minutes, label: "Min" },
-    { value: seconds, label: "Seg" },
+    { v: t.days, l: "Dias" },
+    { v: t.hours, l: "Horas" },
+    { v: t.minutes, l: "Min" },
+    { v: t.seconds, l: "Seg" },
   ];
 
   return (
-    <div className="flex gap-3 md:gap-4 justify-center">
+    <div className="flex gap-3 justify-center">
       {blocks.map((b, i) => (
-        <motion.div
-          key={i}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          custom={0.3 + i * 0.08}
-          className="flex flex-col items-center"
-        >
-          <div className="bg-card/60 backdrop-blur-sm border border-border/60 rounded-xl w-16 h-16 md:w-20 md:h-20 flex items-center justify-center transition-colors duration-300">
-            <span className="text-2xl md:text-3xl font-bold text-foreground tabular-nums">
-              {String(b.value).padStart(2, "0")}
+        <div key={i} className="flex flex-col items-center">
+          <div className="bg-card/50 border border-border/40 rounded-xl w-[4.2rem] h-[4.2rem] sm:w-20 sm:h-20 flex items-center justify-center">
+            <span className="text-2xl sm:text-3xl font-bold text-foreground tabular-nums">
+              {String(b.v).padStart(2, "0")}
             </span>
           </div>
-          <span className="text-[10px] md:text-xs text-muted-foreground mt-1.5 uppercase tracking-wider">{b.label}</span>
-        </motion.div>
+          <span className="text-[10px] text-muted-foreground mt-1.5 uppercase tracking-widest">{b.l}</span>
+        </div>
       ))}
     </div>
   );
 };
 
+const Badge = ({ children }: { children: React.ReactNode }) => (
+  <div className="inline-flex items-center gap-2 bg-accent/30 border border-border/30 rounded-full px-4 py-1.5 mb-6">
+    {children}
+  </div>
+);
+
 const HeroSection = () => (
-  <section className="min-h-[92vh] flex flex-col items-center justify-center relative z-10 px-6">
-    <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
-      <motion.img
-        src="/logo.png"
-        alt="Logo"
-        className="w-20 md:w-24 mb-8"
-        variants={fadeUp}
-        initial="hidden"
-        animate="visible"
-        custom={0}
-      />
-      <motion.div
-        variants={fadeIn}
-        initial="hidden"
-        animate="visible"
-        custom={0.15}
-        className="inline-flex items-center gap-2 bg-accent/40 border border-border/50 rounded-full px-4 py-1.5 mb-8"
-      >
-        <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-        <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+  <section className="min-h-[100svh] flex flex-col items-center justify-center relative z-10 px-5 py-16">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
+      className="flex flex-col items-center text-center max-w-2xl mx-auto"
+    >
+      <img src="/logo.png" alt="Logo" className="w-16 sm:w-20 mb-8" />
+
+      <Badge>
+        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+        <span className="text-[11px] text-muted-foreground font-medium uppercase tracking-widest">
           Ao vivo · 05 de Março · Gratuito
         </span>
-      </motion.div>
-      <motion.h1
-        variants={fadeUp}
-        initial="hidden"
-        animate="visible"
-        custom={0.2}
-        className="font-display text-4xl md:text-6xl lg:text-7xl leading-[1.05] font-bold mb-6 text-foreground"
-      >
-        Sua clínica pode estar <br className="hidden md:block" />
+      </Badge>
+
+      <h1 className="font-display text-[2rem] sm:text-5xl md:text-6xl leading-[1.1] font-bold mb-5 text-foreground">
+        Sua clínica pode estar{" "}
+        <br className="hidden sm:block" />
         perdendo <span className="text-highlight">+R$33k</span>
-      </motion.h1>
-      <motion.p
-        variants={fadeUp}
-        initial="hidden"
-        animate="visible"
-        custom={0.35}
-        className="text-muted-foreground text-base md:text-lg max-w-lg mb-4 font-light leading-relaxed"
-      >
+      </h1>
+
+      <p className="text-muted-foreground text-[15px] sm:text-lg max-w-md mb-3 font-light leading-relaxed">
         Erros silenciosos drenam seu faturamento todos os dias.
         Descubra quais são e como corrigi-los no diagnóstico ao vivo.
-      </motion.p>
-      <motion.p
-        variants={fadeIn}
-        initial="hidden"
-        animate="visible"
-        custom={0.5}
-        className="text-primary/70 text-sm font-medium mb-10 uppercase tracking-wider"
-      >
-        100% gratuito · Duração de 30–40 minutos
-      </motion.p>
-      <motion.div
-        variants={fadeUp}
-        initial="hidden"
-        animate="visible"
-        custom={0.6}
-        className="mb-10"
-      >
+      </p>
+
+      <p className="text-primary/60 text-xs font-medium mb-10 uppercase tracking-widest">
+        100% gratuito · 30–40 minutos
+      </p>
+
+      <div className="mb-10">
         <CountdownTimer />
-      </motion.div>
-      <motion.div
-        variants={fadeUp}
-        initial="hidden"
-        animate="visible"
-        custom={0.75}
-        className="w-full max-w-xs"
+      </div>
+
+      <button
+        onClick={scrollToForm}
+        className="w-full max-w-xs bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-sm uppercase tracking-wider py-4 px-8 rounded-full transition-colors duration-200 flex items-center justify-center gap-2"
       >
-        <ShinyButton onClick={scrollToForm}>
-          Garantir Minha Vaga
-          <ArrowRight className="w-4 h-4" />
-        </ShinyButton>
-      </motion.div>
-    </div>
+        Garantir Minha Vaga
+        <ArrowRight className="w-4 h-4" />
+      </button>
+    </motion.div>
   </section>
 );
 
 const ProblemSection = () => {
-  const problemItems = [
+  const items = [
     { icon: MessageCircle, text: "Clientes pedem valores à noite pelo WhatsApp" },
     { icon: CalendarX, text: "Querem agendar, mas não conseguem" },
     { icon: Check, text: "Estão prontas para decidir naquele momento" },
@@ -221,55 +131,41 @@ const ProblemSection = () => {
 
   return (
     <section className="section-padding relative z-10">
-      <div className="max-w-3xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 bg-accent/40 border border-border/50 rounded-full px-4 py-1.5 mb-6"
-        >
-          <ShieldAlert className="w-3 h-3 text-primary" />
-          <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">O problema</span>
+      <div className="max-w-2xl mx-auto">
+        <motion.div variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-80px" }}>
+          <Badge>
+            <ShieldAlert className="w-3 h-3 text-primary" />
+            <span className="text-[11px] text-muted-foreground font-medium uppercase tracking-widest">O problema</span>
+          </Badge>
+          <h2 className="font-display text-[1.7rem] sm:text-4xl md:text-5xl font-bold text-foreground leading-tight mb-10">
+            O que acontece enquanto{" "}
+            <span className="text-highlight">sua clínica está fechada?</span>
+          </h2>
         </motion.div>
-        <motion.h2
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ delay: 0.08, duration: 0.6, ease }}
-          className="font-display text-3xl md:text-5xl font-bold text-foreground leading-tight mb-12"
-        >
-          O que acontece enquanto{" "}
-          <span className="text-highlight">sua clínica está fechada?</span>
-        </motion.h2>
 
-        <div className="flex flex-col space-y-3">
-          {problemItems.map((item, i) => (
+        <motion.div variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-60px" }} className="flex flex-col gap-2.5">
+          {items.map((item, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, x: -16 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.08, duration: 0.45, ease }}
-              viewport={{ once: true, margin: "-40px" }}
-              className="flex items-center gap-4 py-4 px-5 rounded-xl bg-card/40 border border-border/40 hover:border-primary/20 hover:bg-card/60 transition-all duration-500 ease-out"
+              variants={reveal}
+              className="flex items-center gap-4 py-3.5 px-4 sm:px-5 rounded-xl bg-card/30 border border-border/30 transition-colors duration-300 hover:bg-card/50"
             >
-              <div className="w-9 h-9 rounded-lg bg-accent/60 flex items-center justify-center shrink-0">
-                <item.icon className="w-4 h-4 text-primary" strokeWidth={1.8} />
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-accent/40 flex items-center justify-center shrink-0">
+                <item.icon className="w-4 h-4 text-primary" strokeWidth={1.6} />
               </div>
-              <p className="text-foreground/90 text-sm md:text-base">{item.text}</p>
+              <p className="text-foreground/85 text-sm sm:text-base">{item.text}</p>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          variants={reveal}
+          initial="hidden"
+          whileInView="show"
           viewport={{ once: true, margin: "-40px" }}
-          transition={{ delay: 0.3, duration: 0.6, ease }}
-          className="relative rounded-2xl bg-card/40 border border-primary/15 p-6 md:p-8 text-center overflow-hidden mt-8"
+          className="rounded-2xl bg-card/30 border border-primary/10 p-6 sm:p-8 text-center mt-8"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/8 to-transparent pointer-events-none" />
-          <p className="font-display text-lg md:text-2xl font-bold text-foreground leading-snug relative z-10">
+          <p className="font-display text-lg sm:text-2xl font-bold text-foreground leading-snug">
             Clínicas já recuperaram{" "}
             <span className="text-highlight">+R$33.000</span>{" "}
             corrigindo falhas estruturais simples.
@@ -292,44 +188,31 @@ const DiagnosticSection = () => {
 
   return (
     <section className="section-padding relative z-10">
-      <div className="max-w-3xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 bg-accent/40 border border-border/50 rounded-full px-4 py-1.5 mb-6"
-        >
-          <Search className="w-3 h-3 text-primary" />
-          <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">O diagnóstico</span>
+      <div className="max-w-2xl mx-auto">
+        <motion.div variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-80px" }}>
+          <Badge>
+            <Search className="w-3 h-3 text-primary" />
+            <span className="text-[11px] text-muted-foreground font-medium uppercase tracking-widest">O diagnóstico</span>
+          </Badge>
+          <h2 className="font-display text-[1.7rem] sm:text-4xl md:text-5xl font-bold mb-10 text-foreground leading-tight">
+            O que você vai <span className="text-highlight">descobrir</span>
+          </h2>
         </motion.div>
-        <motion.h2
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ delay: 0.08, duration: 0.6, ease }}
-          className="font-display text-3xl md:text-5xl font-bold mb-12 text-foreground leading-tight"
-        >
-          O que você vai <span className="text-highlight">descobrir</span>
-        </motion.h2>
 
-        <div className="grid gap-3 md:grid-cols-2">
+        <motion.div variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-60px" }} className="grid gap-2.5 sm:grid-cols-2">
           {items.map((item, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.06, duration: 0.45, ease }}
-              viewport={{ once: true, margin: "-30px" }}
-              className="flex items-start gap-4 p-5 rounded-xl bg-card/40 border border-border/40 hover:border-primary/20 hover:bg-card/60 transition-all duration-500 ease-out group"
+              variants={reveal}
+              className="flex items-start gap-3.5 p-4 sm:p-5 rounded-xl bg-card/30 border border-border/30 transition-colors duration-300 hover:bg-card/50 group"
             >
-              <div className="w-9 h-9 rounded-lg bg-accent/60 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform duration-500 ease-out">
-                <item.icon className="w-4 h-4 text-primary" strokeWidth={1.8} />
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-accent/40 flex items-center justify-center shrink-0 mt-0.5">
+                <item.icon className="w-4 h-4 text-primary" strokeWidth={1.6} />
               </div>
-              <p className="text-foreground/90 text-sm md:text-base leading-relaxed">{item.text}</p>
+              <p className="text-foreground/85 text-sm sm:text-base leading-relaxed">{item.text}</p>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -344,12 +227,10 @@ const FormSection = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !whatsapp.trim()) return;
-    
     setLoading(true);
     const { error } = await supabase
       .from("event_registrations")
       .insert({ name: name.trim(), whatsapp: whatsapp.trim() });
-    
     setLoading(false);
     if (error) {
       toast.error("Erro ao inscrever. Tente novamente.");
@@ -359,29 +240,21 @@ const FormSection = () => {
     toast.success("Inscrição realizada com sucesso!");
   };
 
+  const inputClass =
+    "w-full rounded-xl border border-border/40 bg-background/20 px-4 py-3.5 text-foreground placeholder:text-muted-foreground/25 focus:outline-none focus:border-primary/30 focus:ring-1 focus:ring-primary/10 transition-colors duration-200 text-sm";
+
   return (
     <section id="formulario" className="section-padding relative z-10">
-      <div className="max-w-md mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease }}
-          viewport={{ once: true, margin: "-40px" }}
-        >
+      <div className="max-w-sm mx-auto">
+        <motion.div variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-40px" }}>
           {!submitted ? (
-            <div className="bg-card/60 backdrop-blur-sm border border-border/50 rounded-2xl p-8 md:p-10">
-              <div className="text-center mb-8">
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4 }}
-                  className="inline-flex items-center gap-2 bg-accent/40 border border-border/50 rounded-full px-4 py-1.5 mb-6"
-                >
-                  <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                  <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Vagas limitadas</span>
-                </motion.div>
-                <h2 className="font-display text-2xl md:text-3xl font-bold mb-2 text-foreground">
+            <div className="bg-card/40 border border-border/30 rounded-2xl p-7 sm:p-9">
+              <div className="text-center mb-7">
+                <Badge>
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                  <span className="text-[11px] text-muted-foreground font-medium uppercase tracking-widest">Vagas limitadas</span>
+                </Badge>
+                <h2 className="font-display text-2xl sm:text-3xl font-bold mb-2 text-foreground">
                   Garanta sua vaga
                 </h2>
                 <p className="text-muted-foreground text-sm">
@@ -389,73 +262,38 @@ const FormSection = () => {
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.1, duration: 0.4 }}
-                >
-                  <label className="block text-xs uppercase tracking-wider font-medium text-muted-foreground mb-2">
-                    Nome
-                  </label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Seu nome completo"
-                    required
-                    className="w-full rounded-xl border border-border/50 bg-background/30 backdrop-blur-sm px-4 py-3 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/15 transition-all duration-300 text-sm"
-                  />
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.18, duration: 0.4 }}
-                >
-                  <label className="block text-xs uppercase tracking-wider font-medium text-muted-foreground mb-2">
-                    WhatsApp
-                  </label>
-                  <input
-                    type="tel"
-                    value={whatsapp}
-                    onChange={(e) => setWhatsapp(e.target.value)}
-                    placeholder="(00) 00000-0000"
-                    required
-                    className="w-full rounded-xl border border-border/50 bg-background/30 backdrop-blur-sm px-4 py-3 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/15 transition-all duration-300 text-sm"
-                  />
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.25, duration: 0.4 }}
-                  className="pt-2"
-                >
-                  <ShinyButton type="submit" disabled={loading}>
+              <form onSubmit={handleSubmit} className="space-y-3.5">
+                <div>
+                  <label className="block text-[11px] uppercase tracking-widest font-medium text-muted-foreground mb-1.5">Nome</label>
+                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" required className={inputClass} />
+                </div>
+                <div>
+                  <label className="block text-[11px] uppercase tracking-widest font-medium text-muted-foreground mb-1.5">WhatsApp</label>
+                  <input type="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="(00) 00000-0000" required className={inputClass} />
+                </div>
+                <div className="pt-1.5">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 text-primary-foreground font-semibold text-sm uppercase tracking-wider py-4 px-8 rounded-full transition-colors duration-200 flex items-center justify-center gap-2"
+                  >
                     {loading ? "Enviando..." : "Garantir Minha Vaga"}
                     {!loading && <ArrowRight className="w-4 h-4" />}
-                  </ShinyButton>
-                </motion.div>
+                  </button>
+                </div>
               </form>
             </div>
           ) : (
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.97 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, ease }}
-              className="bg-card/60 backdrop-blur-sm border border-border/50 rounded-2xl p-10 text-center"
+              transition={{ duration: 0.4 }}
+              className="bg-card/40 border border-border/30 rounded-2xl p-9 text-center"
             >
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.15, type: "spring", stiffness: 180, damping: 14 }}
-                className="w-14 h-14 border border-primary/40 rounded-full flex items-center justify-center mx-auto mb-6"
-              >
-                <Check className="w-6 h-6 text-primary" />
-              </motion.div>
-              <h3 className="font-display text-2xl font-bold text-foreground mb-3">
+              <div className="w-12 h-12 border border-primary/30 rounded-full flex items-center justify-center mx-auto mb-5">
+                <Check className="w-5 h-5 text-primary" />
+              </div>
+              <h3 className="font-display text-2xl font-bold text-foreground mb-2">
                 Inscrição confirmada!
               </h3>
               <p className="text-muted-foreground text-sm">
@@ -469,26 +307,23 @@ const FormSection = () => {
   );
 };
 
-const Index = () => {
-  return (
-    <div className="min-h-screen bg-background relative overflow-x-hidden">
-      <EtheralShadow
-        color="hsl(340, 40%, 12%)"
-        animation={{ scale: 50, speed: 25 }}
-        noise={{ opacity: 0.015, scale: 1 }}
-      />
-      <FloatingSparkles />
-      <HeroSection />
-      <ProblemSection />
-      <DiagnosticSection />
-      <FormSection />
-      <footer className="text-center py-10 relative z-10">
-        <p className="text-muted-foreground/60 text-xs tracking-wider">
-          © 2026 Diagnóstico Estratégico · Todos os direitos reservados
-        </p>
-      </footer>
+const Index = () => (
+  <div className="min-h-screen bg-background relative overflow-x-hidden">
+    {/* Ambient glow - pure CSS, zero JS */}
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      <div className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-primary/[0.04] blur-[120px]" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-primary/[0.03] blur-[100px]" />
     </div>
-  );
-};
+    <HeroSection />
+    <ProblemSection />
+    <DiagnosticSection />
+    <FormSection />
+    <footer className="text-center py-10 relative z-10">
+      <p className="text-muted-foreground/40 text-xs tracking-widest">
+        © 2026 Diagnóstico Estratégico · Todos os direitos reservados
+      </p>
+    </footer>
+  </div>
+);
 
 export default Index;
