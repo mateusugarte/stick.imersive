@@ -1,26 +1,12 @@
 import { useState, FormEvent, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
 import { Check, Clock, MessageCircle, TrendingDown, Search, Zap, CalendarX, ShieldAlert, HeartPulse, ArrowRight } from "lucide-react";
 
 const scrollToForm = () => {
   document.getElementById("formulario")?.scrollIntoView({ behavior: "smooth" });
 };
 
-// Simple fade-up for all scroll reveals
-const reveal = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } },
-};
-
-// Stagger children
-const stagger = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.07 } },
-};
-
-// Countdown
 const useCountdown = (targetDate: Date) => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   useEffect(() => {
@@ -73,14 +59,15 @@ const Badge = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
+const Section = ({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) => (
+  <section id={id} className={`section-padding relative fade-section ${className}`}>
+    {children}
+  </section>
+);
+
 const HeroSection = () => (
-  <section className="min-h-[100svh] flex flex-col items-center justify-center relative z-10 px-5 py-16">
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.8 }}
-      className="flex flex-col items-center text-center max-w-2xl mx-auto"
-    >
+  <section className="min-h-[100svh] flex flex-col items-center justify-center px-5 py-16 fade-section">
+    <div className="flex flex-col items-center text-center max-w-2xl mx-auto">
       <img src="/logo.png" alt="Logo" className="w-16 sm:w-20 mb-8" />
 
       <Badge>
@@ -111,12 +98,12 @@ const HeroSection = () => (
 
       <button
         onClick={scrollToForm}
-        className="w-full max-w-xs bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-sm uppercase tracking-wider py-4 px-8 rounded-full transition-colors duration-200 flex items-center justify-center gap-2"
+        className="w-full max-w-xs bg-primary hover:bg-primary/90 active:scale-[0.98] text-primary-foreground font-semibold text-sm uppercase tracking-wider py-4 px-8 rounded-full transition-all duration-150 flex items-center justify-center gap-2"
       >
         Garantir Minha Vaga
         <ArrowRight className="w-4 h-4" />
       </button>
-    </motion.div>
+    </div>
   </section>
 );
 
@@ -130,49 +117,40 @@ const ProblemSection = () => {
   ];
 
   return (
-    <section className="section-padding relative z-10">
+    <Section>
       <div className="max-w-2xl mx-auto">
-        <motion.div variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-80px" }}>
-          <Badge>
-            <ShieldAlert className="w-3 h-3 text-primary" />
-            <span className="text-[11px] text-muted-foreground font-medium uppercase tracking-widest">O problema</span>
-          </Badge>
-          <h2 className="font-display text-[1.7rem] sm:text-4xl md:text-5xl font-bold text-foreground leading-tight mb-10">
-            O que acontece enquanto{" "}
-            <span className="text-highlight">sua clínica está fechada?</span>
-          </h2>
-        </motion.div>
+        <Badge>
+          <ShieldAlert className="w-3 h-3 text-primary" />
+          <span className="text-[11px] text-muted-foreground font-medium uppercase tracking-widest">O problema</span>
+        </Badge>
+        <h2 className="font-display text-[1.7rem] sm:text-4xl md:text-5xl font-bold text-foreground leading-tight mb-10">
+          O que acontece enquanto{" "}
+          <span className="text-highlight">sua clínica está fechada?</span>
+        </h2>
 
-        <motion.div variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-60px" }} className="flex flex-col gap-2.5">
+        <div className="flex flex-col gap-2.5">
           {items.map((item, i) => (
-            <motion.div
+            <div
               key={i}
-              variants={reveal}
-              className="flex items-center gap-4 py-3.5 px-4 sm:px-5 rounded-xl bg-card/30 border border-border/30 transition-colors duration-300 hover:bg-card/50"
+              className="flex items-center gap-4 py-3.5 px-4 sm:px-5 rounded-xl bg-card/30 border border-border/30"
             >
               <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-accent/40 flex items-center justify-center shrink-0">
                 <item.icon className="w-4 h-4 text-primary" strokeWidth={1.6} />
               </div>
               <p className="text-foreground/85 text-sm sm:text-base">{item.text}</p>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
 
-        <motion.div
-          variants={reveal}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-40px" }}
-          className="rounded-2xl bg-card/30 border border-primary/10 p-6 sm:p-8 text-center mt-8"
-        >
+        <div className="rounded-2xl bg-card/30 border border-primary/10 p-6 sm:p-8 text-center mt-8">
           <p className="font-display text-lg sm:text-2xl font-bold text-foreground leading-snug">
             Clínicas já recuperaram{" "}
             <span className="text-highlight">+R$33.000</span>{" "}
             corrigindo falhas estruturais simples.
           </p>
-        </motion.div>
+        </div>
       </div>
-    </section>
+    </Section>
   );
 };
 
@@ -187,34 +165,31 @@ const DiagnosticSection = () => {
   ];
 
   return (
-    <section className="section-padding relative z-10">
+    <Section>
       <div className="max-w-2xl mx-auto">
-        <motion.div variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-80px" }}>
-          <Badge>
-            <Search className="w-3 h-3 text-primary" />
-            <span className="text-[11px] text-muted-foreground font-medium uppercase tracking-widest">O diagnóstico</span>
-          </Badge>
-          <h2 className="font-display text-[1.7rem] sm:text-4xl md:text-5xl font-bold mb-10 text-foreground leading-tight">
-            O que você vai <span className="text-highlight">descobrir</span>
-          </h2>
-        </motion.div>
+        <Badge>
+          <Search className="w-3 h-3 text-primary" />
+          <span className="text-[11px] text-muted-foreground font-medium uppercase tracking-widest">O diagnóstico</span>
+        </Badge>
+        <h2 className="font-display text-[1.7rem] sm:text-4xl md:text-5xl font-bold mb-10 text-foreground leading-tight">
+          O que você vai <span className="text-highlight">descobrir</span>
+        </h2>
 
-        <motion.div variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-60px" }} className="grid gap-2.5 sm:grid-cols-2">
+        <div className="grid gap-2.5 sm:grid-cols-2">
           {items.map((item, i) => (
-            <motion.div
+            <div
               key={i}
-              variants={reveal}
-              className="flex items-start gap-3.5 p-4 sm:p-5 rounded-xl bg-card/30 border border-border/30 transition-colors duration-300 hover:bg-card/50 group"
+              className="flex items-start gap-3.5 p-4 sm:p-5 rounded-xl bg-card/30 border border-border/30"
             >
               <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-accent/40 flex items-center justify-center shrink-0 mt-0.5">
                 <item.icon className="w-4 h-4 text-primary" strokeWidth={1.6} />
               </div>
               <p className="text-foreground/85 text-sm sm:text-base leading-relaxed">{item.text}</p>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
-    </section>
+    </Section>
   );
 };
 
@@ -241,84 +216,72 @@ const FormSection = () => {
   };
 
   const inputClass =
-    "w-full rounded-xl border border-border/40 bg-background/20 px-4 py-3.5 text-foreground placeholder:text-muted-foreground/25 focus:outline-none focus:border-primary/30 focus:ring-1 focus:ring-primary/10 transition-colors duration-200 text-sm";
+    "w-full rounded-xl border border-border/40 bg-background/20 px-4 py-3.5 text-foreground placeholder:text-muted-foreground/25 focus:outline-none focus:border-primary/30 focus:ring-1 focus:ring-primary/10 transition-colors duration-150 text-sm";
 
   return (
-    <section id="formulario" className="section-padding relative z-10">
+    <Section id="formulario">
       <div className="max-w-sm mx-auto">
-        <motion.div variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-40px" }}>
-          {!submitted ? (
-            <div className="bg-card/40 border border-border/30 rounded-2xl p-7 sm:p-9">
-              <div className="text-center mb-7">
-                <Badge>
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                  <span className="text-[11px] text-muted-foreground font-medium uppercase tracking-widest">Vagas limitadas</span>
-                </Badge>
-                <h2 className="font-display text-2xl sm:text-3xl font-bold mb-2 text-foreground">
-                  Garanta sua vaga
-                </h2>
-                <p className="text-muted-foreground text-sm">
-                  05 de Março · Diagnóstico Estratégico ao vivo
-                </p>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-3.5">
-                <div>
-                  <label className="block text-[11px] uppercase tracking-widest font-medium text-muted-foreground mb-1.5">Nome</label>
-                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" required className={inputClass} />
-                </div>
-                <div>
-                  <label className="block text-[11px] uppercase tracking-widest font-medium text-muted-foreground mb-1.5">WhatsApp</label>
-                  <input type="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="(00) 00000-0000" required className={inputClass} />
-                </div>
-                <div className="pt-1.5">
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 text-primary-foreground font-semibold text-sm uppercase tracking-wider py-4 px-8 rounded-full transition-colors duration-200 flex items-center justify-center gap-2"
-                  >
-                    {loading ? "Enviando..." : "Garantir Minha Vaga"}
-                    {!loading && <ArrowRight className="w-4 h-4" />}
-                  </button>
-                </div>
-              </form>
-            </div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.97 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4 }}
-              className="bg-card/40 border border-border/30 rounded-2xl p-9 text-center"
-            >
-              <div className="w-12 h-12 border border-primary/30 rounded-full flex items-center justify-center mx-auto mb-5">
-                <Check className="w-5 h-5 text-primary" />
-              </div>
-              <h3 className="font-display text-2xl font-bold text-foreground mb-2">
-                Inscrição confirmada!
-              </h3>
+        {!submitted ? (
+          <div className="bg-card/40 border border-border/30 rounded-2xl p-7 sm:p-9">
+            <div className="text-center mb-7">
+              <Badge>
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                <span className="text-[11px] text-muted-foreground font-medium uppercase tracking-widest">Vagas limitadas</span>
+              </Badge>
+              <h2 className="font-display text-2xl sm:text-3xl font-bold mb-2 text-foreground">
+                Garanta sua vaga
+              </h2>
               <p className="text-muted-foreground text-sm">
-                Em breve você receberá as instruções no WhatsApp.
+                05 de Março · Diagnóstico Estratégico ao vivo
               </p>
-            </motion.div>
-          )}
-        </motion.div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-3.5">
+              <div>
+                <label className="block text-[11px] uppercase tracking-widest font-medium text-muted-foreground mb-1.5">Nome</label>
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" required className={inputClass} />
+              </div>
+              <div>
+                <label className="block text-[11px] uppercase tracking-widest font-medium text-muted-foreground mb-1.5">WhatsApp</label>
+                <input type="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="(00) 00000-0000" required className={inputClass} />
+              </div>
+              <div className="pt-1.5">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-primary hover:bg-primary/90 active:scale-[0.98] disabled:opacity-50 text-primary-foreground font-semibold text-sm uppercase tracking-wider py-4 px-8 rounded-full transition-all duration-150 flex items-center justify-center gap-2"
+                >
+                  {loading ? "Enviando..." : "Garantir Minha Vaga"}
+                  {!loading && <ArrowRight className="w-4 h-4" />}
+                </button>
+              </div>
+            </form>
+          </div>
+        ) : (
+          <div className="bg-card/40 border border-border/30 rounded-2xl p-9 text-center animate-fade-in">
+            <div className="w-12 h-12 border border-primary/30 rounded-full flex items-center justify-center mx-auto mb-5">
+              <Check className="w-5 h-5 text-primary" />
+            </div>
+            <h3 className="font-display text-2xl font-bold text-foreground mb-2">
+              Inscrição confirmada!
+            </h3>
+            <p className="text-muted-foreground text-sm">
+              Em breve você receberá as instruções no WhatsApp.
+            </p>
+          </div>
+        )}
       </div>
-    </section>
+    </Section>
   );
 };
 
 const Index = () => (
-  <div className="min-h-screen bg-background relative overflow-x-hidden">
-    {/* Ambient glow - pure CSS, zero JS */}
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      <div className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-primary/[0.04] blur-[120px]" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-primary/[0.03] blur-[100px]" />
-    </div>
+  <div className="min-h-screen bg-background">
     <HeroSection />
     <ProblemSection />
     <DiagnosticSection />
     <FormSection />
-    <footer className="text-center py-10 relative z-10">
+    <footer className="text-center py-10">
       <p className="text-muted-foreground/40 text-xs tracking-widest">
         © 2026 Diagnóstico Estratégico · Todos os direitos reservados
       </p>
