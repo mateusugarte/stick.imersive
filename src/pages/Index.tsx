@@ -1,24 +1,14 @@
-import { useState, FormEvent, useEffect, useRef } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import ScrollReveal from "../components/ScrollReveal";
 import { EtheralShadow } from "../components/ui/etheral-shadow";
 import { ContainerScroll } from "../components/ui/container-scroll-animation";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { ShinyButton } from "../components/ui/shiny-button";
+import { motion } from "framer-motion";
 import { Check, Clock, MessageCircle, TrendingDown, Search, Zap, CalendarX, ShieldAlert, HeartPulse, ArrowRight } from "lucide-react";
 
 const scrollToForm = () => {
   document.getElementById("formulario")?.scrollIntoView({ behavior: "smooth" });
 };
-
-// Animated floating orbs background
-const FloatingOrbs = () => (
-  <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-    <div className="floating-orb floating-orb-1" />
-    <div className="floating-orb floating-orb-2" />
-    <div className="floating-orb floating-orb-3" />
-    <div className="floating-orb floating-orb-4" />
-    <div className="floating-orb floating-orb-5" />
-  </div>
-);
 
 // Countdown hook
 const useCountdown = (targetDate: Date) => {
@@ -58,14 +48,20 @@ const CountdownTimer = () => {
   return (
     <div className="flex gap-3 md:gap-4 justify-center">
       {blocks.map((b, i) => (
-        <div key={i} className="flex flex-col items-center">
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 + i * 0.1, duration: 0.5, type: "spring" }}
+          className="flex flex-col items-center"
+        >
           <div className="bg-card/80 backdrop-blur border border-border rounded-lg w-16 h-16 md:w-20 md:h-20 flex items-center justify-center">
             <span className="text-2xl md:text-3xl font-bold text-foreground tabular-nums">
               {String(b.value).padStart(2, "0")}
             </span>
           </div>
           <span className="text-[10px] md:text-xs text-muted-foreground mt-1.5 uppercase tracking-wider">{b.label}</span>
-        </div>
+        </motion.div>
       ))}
     </div>
   );
@@ -74,39 +70,70 @@ const CountdownTimer = () => {
 const HeroSection = () => (
   <section className="min-h-[95vh] flex flex-col items-center justify-center relative z-10 px-6">
     <div className="flex flex-col items-center text-center max-w-5xl mx-auto">
-      <img
+      <motion.img
         src="/logo.png"
         alt="Logo"
-        className="w-20 md:w-24 mb-8 animate-fade-in"
+        className="w-20 md:w-24 mb-8"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
       />
-      <div className="inline-flex items-center gap-2 bg-accent/50 border border-border rounded-full px-4 py-1.5 mb-8 animate-fade-in">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+        className="inline-flex items-center gap-2 bg-accent/50 border border-border rounded-full px-4 py-1.5 mb-8"
+      >
         <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
         <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
           Ao vivo · 05 de Março · Gratuito
         </span>
-      </div>
-      <h1 className="font-display text-4xl md:text-6xl lg:text-7xl leading-[1.05] font-bold mb-6 animate-fade-up text-foreground">
+      </motion.div>
+      <motion.h1
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.7 }}
+        className="font-display text-4xl md:text-6xl lg:text-7xl leading-[1.05] font-bold mb-6 text-foreground"
+      >
         Sua clínica pode estar <br className="hidden md:block" />
         perdendo <span className="text-highlight">+R$33k</span>
-      </h1>
-      <p className="text-muted-foreground text-base md:text-lg max-w-lg mb-4 animate-fade-up font-light leading-relaxed" style={{ animationDelay: "0.15s" }}>
+      </motion.h1>
+      <motion.p
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5, duration: 0.6 }}
+        className="text-muted-foreground text-base md:text-lg max-w-lg mb-4 font-light leading-relaxed"
+      >
         Erros silenciosos drenam seu faturamento todos os dias.
         Descubra quais são e como corrigi-los no diagnóstico ao vivo.
-      </p>
-      <p className="text-primary/80 text-sm font-medium mb-10 animate-fade-up uppercase tracking-wider" style={{ animationDelay: "0.2s" }}>
-        100% gratuito · Duração de 30–40 minutos
-      </p>
-      <div className="mb-10 animate-fade-up" style={{ animationDelay: "0.25s" }}>
-        <CountdownTimer />
-      </div>
-      <button
-        onClick={scrollToForm}
-        className="group bg-primary text-primary-foreground font-medium text-sm uppercase tracking-wider px-10 py-4 rounded-lg hover:bg-primary/90 transition-all duration-300 animate-fade-up flex items-center gap-2"
-        style={{ animationDelay: "0.35s" }}
+      </motion.p>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.7, duration: 0.5 }}
+        className="text-primary/80 text-sm font-medium mb-10 uppercase tracking-wider"
       >
-        Garantir Minha Vaga
-        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-      </button>
+        100% gratuito · Duração de 30–40 minutos
+      </motion.p>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8, duration: 0.6 }}
+        className="mb-10"
+      >
+        <CountdownTimer />
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1, duration: 0.6 }}
+        className="w-full max-w-xs"
+      >
+        <ShinyButton onClick={scrollToForm}>
+          Garantir Minha Vaga
+          <ArrowRight className="w-4 h-4" />
+        </ShinyButton>
+      </motion.div>
     </div>
   </section>
 );
@@ -125,14 +152,25 @@ const ProblemScrollSection = () => {
       <ContainerScroll
         titleComponent={
           <div className="mb-8">
-            <div className="inline-flex items-center gap-2 bg-accent/50 border border-border rounded-full px-4 py-1.5 mb-6">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-2 bg-accent/50 border border-border rounded-full px-4 py-1.5 mb-6"
+            >
               <ShieldAlert className="w-3 h-3 text-primary" />
               <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">O problema</span>
-            </div>
-            <h2 className="font-display text-3xl md:text-5xl font-bold text-foreground leading-tight">
+            </motion.div>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1, duration: 0.6 }}
+              className="font-display text-3xl md:text-5xl font-bold text-foreground leading-tight"
+            >
               O que acontece enquanto{" "}
               <span className="text-highlight">sua clínica está fechada?</span>
-            </h2>
+            </motion.h2>
           </div>
         }
       >
@@ -140,11 +178,11 @@ const ProblemScrollSection = () => {
           {problemItems.map((item, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
+              transition={{ delay: i * 0.12, duration: 0.5, type: "spring", stiffness: 100 }}
               viewport={{ once: true }}
-              className="flex items-center gap-4 py-4 px-5 rounded-lg bg-background/50 border border-border/50 hover:border-primary/30 transition-colors duration-300"
+              className="flex items-center gap-4 py-4 px-5 rounded-lg bg-background/50 border border-border/50 hover:border-primary/30 hover:bg-background/70 transition-all duration-300"
             >
               <div className="w-8 h-8 rounded-md bg-accent flex items-center justify-center shrink-0">
                 <item.icon className="w-4 h-4 text-primary" strokeWidth={2} />
@@ -153,14 +191,20 @@ const ProblemScrollSection = () => {
             </motion.div>
           ))}
 
-          <div className="relative rounded-xl bg-card/50 border border-primary/20 p-6 md:p-8 text-center overflow-hidden mt-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5, duration: 0.6 }}
+            className="relative rounded-xl bg-card/50 border border-primary/20 p-6 md:p-8 text-center overflow-hidden mt-4"
+          >
             <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none" />
             <p className="font-display text-lg md:text-2xl font-bold text-foreground leading-snug relative z-10">
               Clínicas já recuperaram{" "}
               <span className="text-highlight">+R$33.000</span>{" "}
               corrigindo falhas estruturais simples.
             </p>
-          </div>
+          </motion.div>
         </div>
       </ContainerScroll>
     </div>
@@ -180,27 +224,36 @@ const DiagnosticSection = () => {
   return (
     <section className="section-padding border-t border-border relative z-10">
       <div className="max-w-3xl mx-auto">
-        <ScrollReveal>
-          <div className="inline-flex items-center gap-2 bg-accent/50 border border-border rounded-full px-4 py-1.5 mb-6">
-            <Search className="w-3 h-3 text-primary" />
-            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">O diagnóstico</span>
-          </div>
-          <h2 className="font-display text-3xl md:text-5xl font-bold mb-16 text-foreground leading-tight">
-            O que você vai <span className="text-highlight">descobrir</span>
-          </h2>
-        </ScrollReveal>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          className="inline-flex items-center gap-2 bg-accent/50 border border-border rounded-full px-4 py-1.5 mb-6"
+        >
+          <Search className="w-3 h-3 text-primary" />
+          <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">O diagnóstico</span>
+        </motion.div>
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1, duration: 0.6 }}
+          className="font-display text-3xl md:text-5xl font-bold mb-16 text-foreground leading-tight"
+        >
+          O que você vai <span className="text-highlight">descobrir</span>
+        </motion.h2>
 
         <div className="grid gap-3 md:grid-cols-2">
           {items.map((item, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.08, duration: 0.5 }}
+              initial={{ opacity: 0, y: 25, scale: 0.95 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: i * 0.1, duration: 0.5, type: "spring", stiffness: 100 }}
               viewport={{ once: true }}
-              className="flex items-start gap-4 p-5 rounded-lg bg-card border border-border/50 hover:border-primary/30 transition-colors duration-300"
+              className="flex items-start gap-4 p-5 rounded-lg bg-card border border-border/50 hover:border-primary/30 hover:bg-card/80 transition-all duration-300 group"
             >
-              <div className="w-8 h-8 rounded-md bg-accent flex items-center justify-center shrink-0 mt-0.5">
+              <div className="w-8 h-8 rounded-md bg-accent flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-110 transition-transform duration-300">
                 <item.icon className="w-4 h-4 text-primary" strokeWidth={2} />
               </div>
               <p className="text-foreground text-sm md:text-base leading-relaxed">{item.text}</p>
@@ -236,10 +289,15 @@ const FormSection = () => {
           {!submitted ? (
             <div className="bg-card/80 backdrop-blur border border-border rounded-xl p-8 md:p-10">
               <div className="text-center mb-8">
-                <div className="inline-flex items-center gap-2 bg-accent/50 border border-border rounded-full px-4 py-1.5 mb-6">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  className="inline-flex items-center gap-2 bg-accent/50 border border-border rounded-full px-4 py-1.5 mb-6"
+                >
                   <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                   <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Vagas limitadas</span>
-                </div>
+                </motion.div>
                 <h2 className="font-display text-2xl md:text-3xl font-bold mb-2 text-foreground">
                   Garanta sua vaga
                 </h2>
@@ -249,7 +307,12 @@ const FormSection = () => {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.1 }}
+                >
                   <label className="block text-xs uppercase tracking-wider font-medium text-muted-foreground mb-2">
                     Nome
                   </label>
@@ -261,8 +324,13 @@ const FormSection = () => {
                     required
                     className="w-full rounded-lg border border-border bg-background/50 backdrop-blur px-4 py-3 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all text-sm"
                   />
-                </div>
-                <div>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 }}
+                >
                   <label className="block text-xs uppercase tracking-wider font-medium text-muted-foreground mb-2">
                     WhatsApp
                   </label>
@@ -274,28 +342,43 @@ const FormSection = () => {
                     required
                     className="w-full rounded-lg border border-border bg-background/50 backdrop-blur px-4 py-3 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all text-sm"
                   />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-primary text-primary-foreground font-medium text-sm uppercase tracking-wider py-4 rounded-lg hover:bg-primary/90 transition-all duration-300 mt-2 flex items-center justify-center gap-2 group"
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 }}
+                  className="pt-2"
                 >
-                  Garantir Minha Vaga
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </button>
+                  <ShinyButton type="submit">
+                    Garantir Minha Vaga
+                    <ArrowRight className="w-4 h-4" />
+                  </ShinyButton>
+                </motion.div>
               </form>
             </div>
           ) : (
-            <div className="bg-card/80 backdrop-blur border border-border rounded-xl p-10 text-center">
-              <div className="w-14 h-14 border border-primary/50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, type: "spring" }}
+              className="bg-card/80 backdrop-blur border border-border rounded-xl p-10 text-center"
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                className="w-14 h-14 border border-primary/50 rounded-full flex items-center justify-center mx-auto mb-6"
+              >
                 <Check className="w-6 h-6 text-primary" />
-              </div>
+              </motion.div>
               <h3 className="font-display text-2xl font-bold text-foreground mb-3">
                 Inscrição confirmada!
               </h3>
               <p className="text-muted-foreground text-sm">
                 Em breve você receberá as instruções no WhatsApp.
               </p>
-            </div>
+            </motion.div>
           )}
         </motion.div>
       </div>
