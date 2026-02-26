@@ -1,5 +1,7 @@
 import { useState, FormEvent, useEffect, useMemo } from "react";
 import ScrollReveal from "../components/ScrollReveal";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { EtheralShadow } from "../components/ui/etheral-shadow";
 import { ContainerScroll } from "../components/ui/container-scroll-animation";
 import { ShinyButton } from "../components/ui/shiny-button";
@@ -312,12 +314,24 @@ const FormSection = () => {
   const [submitted, setSubmitted] = useState(false);
   const [name, setName] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (name.trim() && whatsapp.trim()) {
-      setSubmitted(true);
+    if (!name.trim() || !whatsapp.trim()) return;
+    
+    setLoading(true);
+    const { error } = await supabase
+      .from("event_registrations")
+      .insert({ name: name.trim(), whatsapp: whatsapp.trim() });
+    
+    setLoading(false);
+    if (error) {
+      toast.error("Erro ao inscrever. Tente novamente.");
+      return;
     }
+    setSubmitted(true);
+    toast.success("Inscrição realizada com sucesso!");
   };
 
   return (
@@ -393,9 +407,9 @@ const FormSection = () => {
                   transition={{ delay: 0.3 }}
                   className="pt-2"
                 >
-                  <ShinyButton type="submit">
-                    Garantir Minha Vaga
-                    <ArrowRight className="w-4 h-4" />
+                  <ShinyButton type="submit" disabled={loading}>
+                    {loading ? "Enviando..." : "Garantir Minha Vaga"}
+                    {!loading && <ArrowRight className="w-4 h-4" />}
                   </ShinyButton>
                 </motion.div>
               </form>
