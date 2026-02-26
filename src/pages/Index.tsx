@@ -82,16 +82,19 @@ const HeroSection = () => (
       <div className="inline-flex items-center gap-2 bg-accent/50 border border-border rounded-full px-4 py-1.5 mb-8 animate-fade-in">
         <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
         <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
-          Ao vivo · 05 de Março
+          Ao vivo · 05 de Março · Gratuito
         </span>
       </div>
       <h1 className="font-display text-4xl md:text-6xl lg:text-7xl leading-[1.05] font-bold mb-6 animate-fade-up text-foreground">
         Sua clínica pode estar <br className="hidden md:block" />
         perdendo <span className="text-highlight">+R$33k</span>
       </h1>
-      <p className="text-muted-foreground text-base md:text-lg max-w-lg mb-10 animate-fade-up font-light leading-relaxed" style={{ animationDelay: "0.15s" }}>
+      <p className="text-muted-foreground text-base md:text-lg max-w-lg mb-4 animate-fade-up font-light leading-relaxed" style={{ animationDelay: "0.15s" }}>
         Erros silenciosos drenam seu faturamento todos os dias.
         Descubra quais são e como corrigi-los no diagnóstico ao vivo.
+      </p>
+      <p className="text-primary/80 text-sm font-medium mb-10 animate-fade-up uppercase tracking-wider" style={{ animationDelay: "0.2s" }}>
+        100% gratuito · Duração de 30–40 minutos
       </p>
       <div className="mb-10 animate-fade-up" style={{ animationDelay: "0.25s" }}>
         <CountdownTimer />
@@ -133,7 +136,7 @@ const ProblemScrollSection = () => {
           </div>
         }
       >
-        <div className="flex flex-col justify-center h-full p-4 md:p-8 space-y-3">
+        <div className="flex flex-col space-y-3">
           {problemItems.map((item, i) => (
             <motion.div
               key={i}

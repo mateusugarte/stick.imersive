@@ -12,6 +12,7 @@ export const ContainerScroll = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
+    offset: ["start end", "end start"],
   });
   const [isMobile, setIsMobile] = React.useState(false);
 
@@ -26,25 +27,26 @@ export const ContainerScroll = ({
     };
   }, []);
 
-  const scaleDimensions = () => {
-    return isMobile ? [0.7, 0.9] : [1.05, 1];
-  };
-
-  const rotate = useTransform(scrollYProgress, [0, 1], [20, 0]);
-  const scale = useTransform(scrollYProgress, [0, 1], scaleDimensions());
-  const translate = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const rotate = useTransform(scrollYProgress, [0, 0.4, 0.7], [15, 0, 0]);
+  const scale = useTransform(
+    scrollYProgress,
+    [0, 0.4, 0.7],
+    isMobile ? [0.8, 0.95, 0.95] : [0.9, 1, 1]
+  );
+  const translate = useTransform(scrollYProgress, [0, 0.4], [100, 0]);
+  const opacity = useTransform(scrollYProgress, [0, 0.3], [0.5, 1]);
 
   return (
     <div
-      className="h-[60rem] md:h-[80rem] flex items-center justify-center relative p-2 md:p-20"
+      className="min-h-[50rem] md:min-h-[60rem] flex items-start justify-center relative px-4 md:px-20 py-20 md:py-32"
       ref={containerRef}
     >
       <div
-        className="py-10 md:py-40 w-full relative"
-        style={{ perspective: "1000px" }}
+        className="w-full relative"
+        style={{ perspective: "1200px" }}
       >
-        <Header translate={translate} titleComponent={titleComponent} />
-        <Card rotate={rotate} translate={translate} scale={scale}>
+        <Header translate={translate} opacity={opacity} titleComponent={titleComponent} />
+        <Card rotate={rotate} translate={translate} scale={scale} opacity={opacity}>
           {children}
         </Card>
       </div>
@@ -52,11 +54,11 @@ export const ContainerScroll = ({
   );
 };
 
-export const Header = ({ translate, titleComponent }: any) => {
+export const Header = ({ translate, opacity, titleComponent }: any) => {
   return (
     <motion.div
-      style={{ translateY: translate }}
-      className="div max-w-5xl mx-auto text-center"
+      style={{ translateY: translate, opacity }}
+      className="max-w-5xl mx-auto text-center mb-8"
     >
       {titleComponent}
     </motion.div>
@@ -66,11 +68,13 @@ export const Header = ({ translate, titleComponent }: any) => {
 export const Card = ({
   rotate,
   scale,
+  opacity,
   children,
 }: {
   rotate: MotionValue<number>;
   scale: MotionValue<number>;
   translate: MotionValue<number>;
+  opacity: MotionValue<number>;
   children: React.ReactNode;
 }) => {
   return (
@@ -78,10 +82,11 @@ export const Card = ({
       style={{
         rotateX: rotate,
         scale,
+        opacity,
       }}
-      className="max-w-5xl -mt-12 mx-auto h-[30rem] md:h-[40rem] w-full p-2 md:p-6"
+      className="max-w-3xl mx-auto w-full p-2 md:p-4"
     >
-      <div className="h-full w-full overflow-hidden rounded-2xl bg-card border border-border/50 md:p-4">
+      <div className="w-full rounded-2xl bg-card/80 backdrop-blur border border-border/50 p-4 md:p-6">
         {children}
       </div>
     </motion.div>
